@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,6 +34,7 @@ import org.linphone.core.LinphoneProxyConfig;
 import org.linphone.core.PayloadType;
 import org.linphone.mediastream.Log;
 
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
@@ -42,7 +43,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -67,7 +67,6 @@ public class StatusFragment extends Fragment {
 	private TimerTask mTask;
 	private LinphoneCoreListenerBase mListener;
 	private Dialog ZRTPdialog = null;
-	private int mDisplayedQuality = -1;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
@@ -143,8 +142,22 @@ public class StatusFragment extends Fragment {
 			
 		};
 
+		LinphoneCore lc = LinphoneManager.getLcIfManagerNotDestroyedOrNull();
+		if (lc != null) {
+			lc.addListener(mListener);
+			LinphoneProxyConfig lpc = lc.getDefaultProxyConfig();
+			if (lpc != null) {
+				mListener.registrationState(lc, lpc, lpc.getState(), null);
+			}
+		}
+
+        return view;
+    }
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
 		isAttached = true;
-		Activity activity = getActivity();
 		
 		if (activity instanceof LinphoneActivity) {
 			((LinphoneActivity) activity).updateStatusFragment(this);
@@ -155,20 +168,12 @@ public class StatusFragment extends Fragment {
 		} else if (activity instanceof AssistantActivity) {
 			((AssistantActivity) activity).updateStatusFragment(this);
 			isInCall = false;
-		}
-
-        return view;
-    }
-
-	public void setLinphoneCoreListener() {
-		LinphoneCore lc = LinphoneManager.getLcIfManagerNotDestroyedOrNull();
-		if (lc != null) {
-			lc.addListener(mListener);
-			
-			LinphoneProxyConfig lpc = lc.getDefaultProxyConfig();
-			if (lpc != null) {
-				mListener.registrationState(lc, lpc, lpc.getState(), null);
-			}
+		} else if (activity instanceof CallIncomingActivity) {
+			((CallIncomingActivity) activity).updateStatusFragment(this);
+			isInCall = true;
+		} else if (activity instanceof CallOutgoingActivity) {
+			((CallOutgoingActivity) activity).updateStatusFragment(this);
+			isInCall = true;
 		}
 	}
 	
@@ -185,7 +190,7 @@ public class StatusFragment extends Fragment {
 			voicemailCount.setVisibility(View.GONE);
 			
 			if (isInCall && isAttached) {
-				//LinphoneCall call = LinphoneManager.getLc().getCurrentCall();
+				LinphoneCall call = LinphoneManager.getLc().getCurrentCall();
 				//initCallStatsRefresher(call, callStats);
 			} else if (!isInCall) {
 				voicemailCount.setVisibility(View.VISIBLE);
@@ -211,6 +216,8 @@ public class StatusFragment extends Fragment {
 
 	private int getStatusIconResource(LinphoneCore.RegistrationState state, boolean isDefaultAccount) {
 		try {
+			
+			//System.out.println("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"+state);
 			LinphoneCore lc = LinphoneManager.getLcIfManagerNotDestroyedOrNull();
 			boolean defaultAccountConnected = (isDefaultAccount && lc != null && lc.getDefaultProxyConfig() != null && lc.getDefaultProxyConfig().isRegistered()) || !isDefaultAccount;
 			if (state == RegistrationState.RegistrationOk && defaultAccountConnected) {
@@ -223,7 +230,7 @@ public class StatusFragment extends Fragment {
 				return R.drawable.led_disconnected;
 			}
 		} catch (Exception e) {
-			Log.e(e);
+			e.printStackTrace();
 		}
 		
 		return R.drawable.led_disconnected;
@@ -247,7 +254,7 @@ public class StatusFragment extends Fragment {
 				return context.getString(R.string.status_not_connected);
 			}
 		} catch (Exception e) {
-			Log.e(e);
+			e.printStackTrace();
 		}
 		
 		return context.getString(R.string.status_not_connected);
@@ -265,8 +272,12 @@ public class StatusFragment extends Fragment {
 					mCallQualityUpdater = null;
 					return;
 				}
+				
+				int oldQuality = 0;
 				float newQuality = mCurrentCall.getCurrentQuality();
-				updateQualityOfSignalIcon(newQuality);
+				if ((int) newQuality != oldQuality) {
+					updateQualityOfSignalIcon(newQuality);
+				}
 				
 				if (isInCall) {
 					refreshHandler.postDelayed(this, 1000);
@@ -277,9 +288,6 @@ public class StatusFragment extends Fragment {
 	}
 	
 	void updateQualityOfSignalIcon(float quality) {
-		int iQuality = (int) quality;
-		
-		if (iQuality == mDisplayedQuality) return;
 		if (quality >= 4) // Good Quality
 		{
 			callQuality.setImageResource(
@@ -301,40 +309,26 @@ public class StatusFragment extends Fragment {
 			callQuality.setImageResource(
 					R.drawable.call_quality_indicator_0);
 		}
-		mDisplayedQuality = iQuality;
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
-
+		
 		LinphoneCore lc = LinphoneManager.getLcIfManagerNotDestroyedOrNull();
-		if (lc != null) {
-			lc.addListener(mListener);
-			LinphoneProxyConfig lpc = lc.getDefaultProxyConfig();
-			if (lpc != null) {
-				mListener.registrationState(lc, lpc, lpc.getState(), null);
+		LinphoneCall call = lc.getCurrentCall();
+		if (isInCall && (call != null || lc.getConferenceSize() > 1 || lc.getCallsNb() > 0)) {
+			if (call != null) {
+				startCallQuality();
+				refreshStatusItems(call, call.getCurrentParamsCopy().getVideoEnabled());
 			}
+			menu.setVisibility(View.INVISIBLE);
+			encryption.setVisibility(View.VISIBLE);
+			callQuality.setVisibility(View.VISIBLE);
 			
-			LinphoneCall call = lc.getCurrentCall();
-			if (isInCall && (call != null || lc.getConferenceSize() > 1 || lc.getCallsNb() > 0)) {
-				if (call != null) {
-					startCallQuality();
-					refreshStatusItems(call, call.getCurrentParamsCopy().getVideoEnabled());
-				}
-				menu.setVisibility(View.INVISIBLE);
-				encryption.setVisibility(View.VISIBLE);
-				callQuality.setVisibility(View.VISIBLE);
-
-				// We are obviously connected
-				if(lc.getDefaultProxyConfig() == null){
-					statusLed.setImageResource(R.drawable.led_disconnected);
-					statusText.setText(getString(R.string.no_account));
-				} else {
-					statusLed.setImageResource(getStatusIconResource(lc.getDefaultProxyConfig().getState(),true));
-					statusText.setText(getStatusIconText(lc.getDefaultProxyConfig().getState()));
-				}
-			}
+			// We are obviously connected
+			statusLed.setImageResource(R.drawable.led_connected);
+			statusText.setText(getString(R.string.status_connected));
 		} else {
 			statusText.setVisibility(View.VISIBLE);
 			encryption.setVisibility(View.GONE);
@@ -345,15 +339,20 @@ public class StatusFragment extends Fragment {
 	public void onPause() {
 		super.onPause();
 		
+		if (mCallQualityUpdater != null) {
+			refreshHandler.removeCallbacks(mCallQualityUpdater);
+			mCallQualityUpdater = null;
+		}
+	}
+	
+	@Override
+	public void onDestroy() {
 		LinphoneCore lc = LinphoneManager.getLcIfManagerNotDestroyedOrNull();
 		if (lc != null) {
 			lc.removeListener(mListener);
 		}
 		
-		if (mCallQualityUpdater != null) {
-			refreshHandler.removeCallbacks(mCallQualityUpdater);
-			mCallQualityUpdater = null;
-		}
+		super.onDestroy();
 	}
 	
 	public void refreshStatusItems(final LinphoneCall call, boolean isVideoEnabled) {
@@ -397,7 +396,7 @@ public class StatusFragment extends Fragment {
 		if(ZRTPdialog == null || !ZRTPdialog.isShowing()) {
 			ZRTPdialog = new Dialog(getActivity());
 			ZRTPdialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-			Drawable d = new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.colorC));
+			Drawable d = new ColorDrawable(getResources().getColor(R.color.colorC));
 			d.setAlpha(200);
 			ZRTPdialog.setContentView(R.layout.dialog);
 			ZRTPdialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
@@ -406,7 +405,7 @@ public class StatusFragment extends Fragment {
 			TextView customText = (TextView) ZRTPdialog.findViewById(R.id.customText);
 			String newText = getString(R.string.zrtp_dialog).replace("%s", call.getAuthenticationToken());
 			customText.setText(newText);
-			Button delete = (Button) ZRTPdialog.findViewById(R.id.delete_button);
+			Button delete = (Button) ZRTPdialog.findViewById(R.id.delete);
 			delete.setText(R.string.accept);
 			Button cancel = (Button) ZRTPdialog.findViewById(R.id.cancel);
 			cancel.setText(R.string.deny);
@@ -451,6 +450,7 @@ public class StatusFragment extends Fragment {
 					mTimer.cancel();
 					return;
 				}
+				
 
 				final TextView title = (TextView) view.findViewById(R.id.call_stats_title);
 				final TextView codec = (TextView) view.findViewById(R.id.codec);
@@ -478,10 +478,7 @@ public class StatusFragment extends Fragment {
 									PayloadType payloadAudio = params.getUsedAudioCodec();
 									PayloadType payloadVideo = params.getUsedVideoCodec();
 									if (payloadVideo != null && payloadAudio != null) {
-										String videoMime = payloadVideo.getMime();
-										if (payloadVideo.getMime().equals("H264") && LinphoneManager.getInstance().getOpenH264DownloadHelper().isCodecFound())
-											videoMime = "OpenH264";
-										codec.setText(videoMime + " / " + payloadAudio.getMime() + (payloadAudio.getRate() / 1000));
+										codec.setText(payloadVideo.getMime() + " / " + payloadAudio.getMime() + (payloadAudio.getRate() / 1000));
 									}
 									dl.setText(String.valueOf((int) videoStats.getDownloadBandwidth()) + " / " + (int) audioStats.getDownloadBandwidth() + " kbits/s");
 									ul.setText(String.valueOf((int) videoStats.getUploadBandwidth()) +  " / " + (int) audioStats.getUploadBandwidth() + " kbits/s");

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 
@@ -163,12 +163,12 @@ public class RemoteProvisioningActivity extends Activity {
 		new AlertDialog.Builder(RemoteProvisioningActivity.this)
 				.setTitle(getString(R.string.remote_provisioning_again_title))
 				.setMessage(getString(R.string.remote_provisioning_again_message))
-				.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+				.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						setRemoteProvisioningAddressAndRestart(configUriParam);
 					}
 				})
-				.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						goToLinphoneActivity();
 					}
@@ -192,7 +192,7 @@ public class RemoteProvisioningActivity extends Activity {
 
 	private void goToLinphoneActivity() {
 		if (LinphoneService.isReady()) {
-			LinphoneService.instance().setActivityToLaunchOnIncomingReceived("org.linphone.LinphoneLauncherActivity");
+			LinphoneService.instance().setActivityToLaunchOnIncomingReceived(LinphoneLauncherActivity.class);
 			//finish(); // To prevent the user to come back to this page using back button
 			startActivity(new Intent().setClass(this, LinphoneLauncherActivity.class));
 		} else {

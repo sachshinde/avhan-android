@@ -14,9 +14,11 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 package org.linphone;
+
+import org.linphone.mediastream.Log;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,18 +32,26 @@ import android.telephony.TelephonyManager;
  *
  */
 public class PhoneStateChangedReceiver extends BroadcastReceiver {
+
 	@Override
 	public void onReceive(Context context, Intent intent) {
+
+
 		final String extraState = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 
 		if (TelephonyManager.EXTRA_STATE_RINGING.equals(extraState) || TelephonyManager.EXTRA_STATE_OFFHOOK.equals(extraState)) {
 			LinphoneManager.setGsmIdle(false);
 			if (!LinphoneManager.isInstanciated()) {
+				Log.i("GSM call state changed but manager not instantiated");
 				return;
 			}
 			LinphoneManager.getLc().pauseAllCalls();
         } else if (TelephonyManager.EXTRA_STATE_IDLE.equals(extraState)) {
         	LinphoneManager.setGsmIdle(true);
         }
+		
+		 
+		// do nothing
 	}
+
 }

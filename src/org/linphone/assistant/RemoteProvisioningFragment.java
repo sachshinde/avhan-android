@@ -15,14 +15,14 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 
 import org.linphone.LinphoneManager;
 import org.linphone.LinphonePreferences;
-import org.linphone.R;
 
+import org.linphone.R;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
@@ -58,10 +58,8 @@ public class RemoteProvisioningFragment extends Fragment implements OnClickListe
 		
 		if (id == R.id.assistant_apply) {
 			String url = remoteProvisioningUrl.getText().toString();
-			AssistantActivity.instance().displayRemoteProvisioningInProgressDialog();
 			LinphonePreferences.instance().setRemoteProvisioningUrl(url);
 			LinphoneManager.getInstance().restartLinphoneCore();
-			AssistantActivity.instance().setLinphoneCoreListener();
 		}
 	}
 

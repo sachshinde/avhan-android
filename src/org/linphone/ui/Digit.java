@@ -14,7 +14,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 package org.linphone.ui;
 
@@ -132,11 +132,11 @@ public class Digit extends Button implements AddressAware {
 		public void displayDebugPopup(){
 			AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
 			alertDialog.setTitle(getContext().getString(R.string.debug_popup_title));
-			if(LinphonePreferences.instance().isDebugEnabled()) {
+			if(LinphonePreferences.instance().isDebugLogsEnabled()) {
 				alertDialog.setItems(getContext().getResources().getStringArray(R.array.popup_send_log), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						if(which == 0){
-							LinphonePreferences.instance().setDebugEnabled(false);
+							LinphonePreferences.instance().enableDebugLogs(false);
 							LinphoneCoreFactory.instance().enableLogCollection(false);
 						}
 						if(which == 1) {
@@ -152,7 +152,7 @@ public class Digit extends Button implements AddressAware {
 				alertDialog.setItems(getContext().getResources().getStringArray(R.array.popup_enable_log), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						if(which == 0) {
-							LinphonePreferences.instance().setDebugEnabled(true);
+							LinphonePreferences.instance().enableDebugLogs(true);
 							LinphoneCoreFactory.instance().enableLogCollection(true);
 						}
 					}

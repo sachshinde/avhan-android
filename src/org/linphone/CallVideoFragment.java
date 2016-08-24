@@ -15,17 +15,21 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 import org.linphone.compatibility.Compatibility;
 import org.linphone.compatibility.CompatibilityScaleGestureDetector;
 import org.linphone.compatibility.CompatibilityScaleGestureListener;
 import org.linphone.core.LinphoneCall;
+import org.linphone.core.LinphoneCore;
 import org.linphone.mediastream.Log;
 import org.linphone.mediastream.video.AndroidVideoWindowImpl;
 import org.linphone.mediastream.video.capture.hwconf.AndroidCameraConfiguration;
 
+
+import android.app.Activity;
 import android.app.Fragment;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
@@ -37,7 +41,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 /**
  * @author Sylvain Berfini
@@ -51,18 +54,12 @@ public class CallVideoFragment extends Fragment implements OnGestureListener, On
 	private float mZoomCenterX, mZoomCenterY;
 	private CompatibilityScaleGestureDetector mScaleDetector;
 	private CallActivity inCallActivity;
-	private int previewX, previewY;
 	
 	@SuppressWarnings("deprecation") // Warning useless because value is ignored and automatically set by new APIs.
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
         Bundle savedInstanceState) {		
-		View view;
-		if (LinphoneManager.getLc().hasCrappyOpenGL()) {
-			view = inflater.inflate(R.layout.video_no_opengl, container, false);
-		} else {
-        	view = inflater.inflate(R.layout.video, container, false);
-		}
+        View view = inflater.inflate(R.layout.video, container, false);
         
 		mVideoView = (SurfaceView) view.findViewById(R.id.videoSurface);
 		mCaptureView = (SurfaceView) view.findViewById(R.id.videoCaptureSurface);
@@ -72,12 +69,15 @@ public class CallVideoFragment extends Fragment implements OnGestureListener, On
 		
 		androidVideoWindowImpl = new AndroidVideoWindowImpl(mVideoView, mCaptureView, new AndroidVideoWindowImpl.VideoWindowListener() {
 			public void onVideoRenderingSurfaceReady(AndroidVideoWindowImpl vw, SurfaceView surface) {
-				mVideoView = surface;
 				LinphoneManager.getLc().setVideoWindow(vw);
+				mVideoView = surface;
 			}
 
 			public void onVideoRenderingSurfaceDestroyed(AndroidVideoWindowImpl vw) {
-				
+				LinphoneCore lc = LinphoneManager.getLc(); 
+				if (lc != null) {
+					lc.setVideoWindow(null);
+				}
 			}
 
 			public void onVideoPreviewSurfaceReady(AndroidVideoWindowImpl vw, SurfaceView surface) {
@@ -86,7 +86,8 @@ public class CallVideoFragment extends Fragment implements OnGestureListener, On
 			}
 
 			public void onVideoPreviewSurfaceDestroyed(AndroidVideoWindowImpl vw) {
-				
+				// Remove references kept in jni code and restart camera
+				LinphoneManager.getLc().setPreviewWindow(null);
 			}
 		});
 		
@@ -104,41 +105,8 @@ public class CallVideoFragment extends Fragment implements OnGestureListener, On
 			}
 		});
 		
-		mCaptureView.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View view, MotionEvent motionEvent) {
-				switch (motionEvent.getAction()) {
-				case MotionEvent.ACTION_DOWN:
-					previewX = (int) motionEvent.getX();
-					previewY = (int) motionEvent.getY();
-					break;
-				case MotionEvent.ACTION_MOVE:
-					int x = (int) motionEvent.getX();
-					int y = (int) motionEvent.getY();
-					RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)mCaptureView.getLayoutParams();
-					lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 0); // Clears the rule, as there is no removeRule until API 17.
-					lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
-					int left = lp.leftMargin + (x - previewX);
-					int top = lp.topMargin + (y - previewY);
-					lp.leftMargin = left;
-					lp.topMargin = top;
-					view.setLayoutParams(lp);
-					break;
-				}
-				return true;
-			}
-		});
 		return view;
     }
-	
-	@Override
-	public void onStart() {
-		super.onStart();
-		inCallActivity = (CallActivity) getActivity();
-		if (inCallActivity != null) {
-			inCallActivity.bindVideoFragment(this);
-		}
-	}
 
 	private void fixZOrder(SurfaceView video, SurfaceView preview) {
 		video.setZOrderOnTop(false);
@@ -167,9 +135,10 @@ public class CallVideoFragment extends Fragment implements OnGestureListener, On
 	public void onResume() {		
 		super.onResume();
 		
-		if (LinphonePreferences.instance().isOverlayEnabled()) {
-			LinphoneService.instance().destroyOverlay();
+		if (mVideoView != null) {
+			((GLSurfaceView) mVideoView).onResume();
 		}
+		
 		if (androidVideoWindowImpl != null) {
 			synchronized (androidVideoWindowImpl) {
 				LinphoneManager.getLc().setVideoWindow(androidVideoWindowImpl);
@@ -191,8 +160,9 @@ public class CallVideoFragment extends Fragment implements OnGestureListener, On
 				LinphoneManager.getLc().setVideoWindow(null);
 			}
 		}
-		if (LinphonePreferences.instance().isOverlayEnabled()) {
-			LinphoneService.instance().createOverlay();
+		
+		if (mVideoView != null) {
+			((GLSurfaceView) mVideoView).onPause();
 		}
 		
 		super.onPause();
@@ -299,6 +269,16 @@ public class CallVideoFragment extends Fragment implements OnGestureListener, On
 		}
 		
 		super.onDestroy();
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		
+		inCallActivity = (CallActivity) activity;
+		if (inCallActivity != null) {
+			inCallActivity.bindVideoFragment(this);
+		}
 	}
 	
 	@Override

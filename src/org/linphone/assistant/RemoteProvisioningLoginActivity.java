@@ -15,23 +15,24 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 import org.linphone.LinphoneManager;
 import org.linphone.LinphonePreferences;
-import org.linphone.R;
 import org.linphone.core.LinphoneCore;
 import org.linphone.core.LinphoneCoreListenerBase;
 import org.linphone.xmlrpc.XmlRpcHelper;
 import org.linphone.xmlrpc.XmlRpcListenerBase;
 
+import org.linphone.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
@@ -39,6 +40,7 @@ import android.widget.Toast;
  */
 public class RemoteProvisioningLoginActivity extends Activity implements OnClickListener {
 	private EditText login, password, domain;
+	private ImageView  cancel;
 	private Button connect;
 	private LinphoneCoreListenerBase mListener;
 
@@ -50,6 +52,9 @@ public class RemoteProvisioningLoginActivity extends Activity implements OnClick
 		login = (EditText) findViewById(R.id.assistant_username);
 		password = (EditText) findViewById(R.id.assistant_password);
 		domain = (EditText) findViewById(R.id.assistant_domain);
+
+		//cancel = (ImageView) findViewById(R.id.cancel);
+		//cancel.setOnClickListener(this);
 
 		connect = (Button) findViewById(R.id.assistant_connect);
 		connect.setOnClickListener(this);
@@ -81,7 +86,9 @@ public class RemoteProvisioningLoginActivity extends Activity implements OnClick
 	}
 	
 	private boolean storeAccount(String username, String password, String domain) {
-		XmlRpcHelper xmlRpcHelper = new XmlRpcHelper();
+		LinphoneCore lc = LinphoneManager.getLc();
+
+		XmlRpcHelper xmlRpcHelper = new XmlRpcHelper(null);
 		xmlRpcHelper.getRemoteProvisioningFilenameAsync(new XmlRpcListenerBase() {
 			@Override
 			public void onRemoteProvisioningFilenameSent(String result) {
@@ -99,7 +106,7 @@ public class RemoteProvisioningLoginActivity extends Activity implements OnClick
 			prxCfg.setIdentity(identity);
 			lc.addProxyConfig(prxCfg);
 		} catch (LinphoneCoreException e) {
-			Log.e(e);
+			e.printStackTrace();
 			return false;
 		}
 		

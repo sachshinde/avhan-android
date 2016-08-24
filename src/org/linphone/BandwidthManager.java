@@ -14,7 +14,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 package org.linphone;
 
@@ -47,12 +47,19 @@ public class BandwidthManager {
 
 
 	public void updateWithProfileSettings(LinphoneCore lc, LinphoneCallParams callParams) {
+		System.out.println("updating linphone");
+		System.out.println(lc);
+		System.out.println("updating linphone");
+		System.out.println(callParams);
 		if (callParams != null) { // in call
 			// Update video parm if
-			if (!isVideoPossible()) { // NO VIDEO
+			if (!isVideoPossible()) {
+				System.out.println("if");
+				// NO VIDEO
 				callParams.setVideoEnabled(false);
 				callParams.setAudioBandwidth(40);
 			} else {
+System.out.println("else");
 				callParams.setVideoEnabled(true);
 				callParams.setAudioBandwidth(0); // disable limitation
 			}

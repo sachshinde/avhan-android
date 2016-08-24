@@ -9,7 +9,7 @@
     android:background="@drawable/list_selector">
 
 	<CheckBox
-		android:id="@+id/delete_chatroom"
+		android:id="@+id/delete"
 		android:button="@drawable/checkbox"
 		android:contentDescription="@string/content_description_delete"
 		android:paddingRight="5dp"
@@ -18,12 +18,25 @@
 		android:adjustViewBounds="true"
 		android:layout_alignParentRight="true"
 		android:layout_centerVertical="true"
-		android:visibility="invisible" android:layout_alignParentTop="true"/>
-
+		android:visibility="invisible" />
+	
+	<TextView 
+	    android:id="@+id/draft"
+	    android:visibility="gone"
+	    android:layout_centerVertical="true"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textAppearance="?android:attr/textAppearanceSmall"
+	    android:textColor="@color/colorB"
+	    android:text="@string/draft"
+	    android:layout_marginLeft="5dp"
+	    android:layout_marginRight="5dp" />
+	
 	<LinearLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:layout_centerVertical="true"
+	    android:layout_toLeftOf="@id/draft"
 	    android:orientation="horizontal">
 
 		<RelativeLayout
@@ -68,13 +81,15 @@
 				android:layout_height="wrap_content"
 				android:layout_marginTop="5dp"
 				android:singleLine="true"
-				android:layout_alignBottom="@id/sipUri"
 				style="@style/font2"/>
 
 			<TextView
 				android:id="@+id/sipUri"
 				android:lines="1"
-				android:ellipsize="end"
+				android:ellipsize="marquee"
+				android:marqueeRepeatLimit="marquee_forever"
+				android:scrollHorizontally="true"
+				android:fadingEdge="horizontal"
 				android:singleLine="true"
 				style="@style/font6"
 				android:paddingLeft="10dp"
@@ -86,16 +101,15 @@
 
 			<TextView
 				android:id="@+id/unreadMessages"
-				android:layout_width="20dp"
-				android:layout_height="20dp"
+				android:layout_width="25dp"
+				android:layout_height="25dp"
 				android:background="@drawable/chat_list_indicator"
-				android:contentDescription="@string/content_description_unread_chat_message"
 				style="@style/font18"
 				android:gravity="center"
 				android:singleLine="true"
+				android:layout_above="@+id/lastMessage"
 				android:layout_alignParentRight="true"
-				android:layout_alignParentEnd="true"
-				android:layout_alignParentTop="true"/>
+				android:layout_alignParentEnd="true"/>
 
 			<TextView
 				android:id="@+id/lastMessage"

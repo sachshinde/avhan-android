@@ -14,20 +14,23 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package org.linphone;
 
 import static android.content.Intent.ACTION_MAIN;
 
 import org.linphone.assistant.RemoteProvisioningActivity;
+import org.linphone.mediastream.Log;
 import org.linphone.tutorials.TutorialLauncherActivity;
+
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 
 /**
  * 
@@ -45,11 +48,20 @@ public class LinphoneLauncherActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		// Used to change for the lifetime of the app the name used to tag the logs
+		new Log(getResources().getString(R.string.app_name), !getResources().getBoolean(R.bool.disable_every_log));
+		
 		// Hack to avoid to draw twice LinphoneActivity on tablets
-        if (getResources().getBoolean(R.bool.orientation_portrait_only)) {
+        if (getResources().getBoolean(R.bool.isTablet)) {
+        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else  if (getResources().getBoolean(R.bool.orientation_portrait_only)) {
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
 		setContentView(R.layout.launch_screen);
+		if (android.os.Build.VERSION.SDK_INT > 9) {
+		    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		    StrictMode.setThreadPolicy(policy);
+		}
         
 		mHandler = new Handler();
 		
@@ -73,6 +85,7 @@ public class LinphoneLauncherActivity extends Activity {
 			classToStart = LinphoneActivity.class;
 		}
 		
+		LinphoneService.instance().setActivityToLaunchOnIncomingReceived(classToStart);
 		mHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
@@ -81,6 +94,7 @@ public class LinphoneLauncherActivity extends Activity {
 			}
 		}, 1000);
 	}
+
 
 	private class ServiceWaitThread extends Thread {
 		public void run() {

@@ -45,8 +45,7 @@
 				android:id="@+id/assistant_username"
 				android:background="@drawable/resizable_textfield"
 				android:textColor="@color/colorB"
-				android:inputType="text|textNoSuggestions"
-				android:contentDescription="@string/content_description_username_field"
+				android:inputType="text|textEmailAddress"
 				android:layout_width="match_parent"
 				android:layout_height="40dp"
 				android:singleLine="true"/>
@@ -80,8 +79,7 @@
 				android:id="@+id/assistant_domain"
 				android:background="@drawable/resizable_textfield"
 				android:textColor="@color/colorB"
-				android:inputType="textUri"
-				android:contentDescription="@string/content_description_domain_field"
+				android:inputType="textEmailAddress"
 				android:layout_width="match_parent"
 				android:layout_height="40dp"
 				android:singleLine="true"/>
@@ -98,8 +96,7 @@
 				android:id="@+id/assistant_display_name"
 				android:background="@drawable/resizable_textfield"
 				android:textColor="@color/colorB"
-				android:inputType="textPersonName"
-				android:contentDescription="@string/content_description_display_field"
+				android:inputType="textEmailAddress"
 				android:layout_width="match_parent"
 				android:layout_height="40dp"
 				android:singleLine="true"/>

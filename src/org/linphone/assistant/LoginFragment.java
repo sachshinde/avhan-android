@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 import org.linphone.R;
 
@@ -56,11 +56,19 @@ public class LoginFragment extends Fragment implements OnClickListener, TextWatc
 		transports = (RadioGroup) view.findViewById(R.id.assistant_transports);
 		apply = (Button) view.findViewById(R.id.assistant_apply);
 		apply.setEnabled(false);
-		apply.setOnClickListener(this);
+		//apply.setOnClickListener(this);
+		apply.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	System.out.println("hello");
+            }
+        });
+
 		
 		return view;
 	}
-
+	public void test(){
+		System.out.println("hellotest");
+	}
 	@Override
 	public void onClick(View v) {
 		int id = v.getId();
@@ -71,7 +79,7 @@ public class LoginFragment extends Fragment implements OnClickListener, TextWatc
 				return;
 			}
 
-			TransportType transport;
+			/*TransportType transport;
 			if(transports.getCheckedRadioButtonId() == R.id.transport_udp){
 				transport = TransportType.LinphoneTransportUdp;
 			} else {
@@ -80,9 +88,9 @@ public class LoginFragment extends Fragment implements OnClickListener, TextWatc
 				} else {
 					transport = TransportType.LinphoneTransportTls;
 				}
-			}
+			}*/
 
-			AssistantActivity.instance().genericLogIn(login.getText().toString(), password.getText().toString(), displayName.getText().toString(), domain.getText().toString(), transport);
+			//AssistantActivity.instance().genericLogIn(login.getText().toString(), password.getText().toString(), displayName.getText().toString(), domain.getText().toString(), transport);
 		}
 	}
 

@@ -15,10 +15,9 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 import org.linphone.R;
-
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -37,10 +36,10 @@ public class WelcomeFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.assistant_welcome, container, false);
-
+		
 		createAccount = (Button) view.findViewById(R.id.create_account);
 		createAccount.setOnClickListener(this);
-
+		
 		logLinphoneAccount = (Button) view.findViewById(R.id.login_linphone);
 		if (getResources().getBoolean(R.bool.hide_linphone_accounts_wizard)) {
 			logLinphoneAccount.setVisibility(View.GONE);

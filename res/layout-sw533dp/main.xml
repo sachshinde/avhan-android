@@ -9,7 +9,7 @@
 		android:id="@+id/status"
 		android:name="org.linphone.StatusFragment"
 		android:layout_width="match_parent"
-		android:layout_height="40dp"
+		android:layout_height="35dp"
 		tools:layout="@layout/status" />
 
 	<android.support.v4.widget.DrawerLayout
@@ -42,7 +42,6 @@
 				<ImageView
 					android:id="@+id/cancel"
 					android:src="@drawable/dialer_back"
-					android:contentDescription="@string/content_description_dialer_back"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
 					android:padding="15dp"
@@ -72,22 +71,17 @@
 							android:id="@+id/fragmentContainer"
 							android:layout_width="match_parent"
 							android:layout_height="match_parent"
-							android:layout_weight="1"
+							android:layout_weight="0.63"
 							android:orientation="horizontal" />
 
 						<LinearLayout
 							android:id="@+id/fragmentContainer2"
+							android:visibility="gone"
 							android:layout_width="match_parent"
 							android:layout_height="match_parent"
-							android:layout_weight="1"
-							android:orientation="horizontal">
+							android:layout_weight="0.37"
+							android:orientation="horizontal"/>
 
-							<View
-								android:background="@color/colorE"
-								android:layout_width="1dp"
-								android:layout_height="match_parent"/>
-
-						</LinearLayout>
 					</LinearLayout>
 				</FrameLayout>
 
@@ -108,9 +102,7 @@
 					android:layout_height="match_parent">
 
 					<ImageView
-						android:id="@+id/footer_history"
 						android:src="@drawable/footer_history"
-						android:contentDescription="@string/content_description_history"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:padding="15dp"
@@ -130,11 +122,9 @@
 						style="@style/font18"
 						android:layout_width="20dp"
 						android:layout_height="20dp"
+						android:layout_margin="15dp"
 						android:gravity="center"
-						android:layout_margin="20dp"
-						android:layout_alignParentTop="true"
-						android:layout_alignParentRight="true"
-						android:visibility="visible"/>
+						android:visibility="gone"/>
 
 				</RelativeLayout>
 
@@ -147,7 +137,6 @@
 
 					<ImageView
 						android:src="@drawable/footer_contacts"
-						android:contentDescription="@string/content_description_contacts"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:padding="15dp"
@@ -171,7 +160,6 @@
 
 					<ImageView
 						android:src="@drawable/footer_dialer"
-						android:contentDescription="@string/content_description_dialer"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:padding="15dp"
@@ -195,7 +183,6 @@
 
 					<ImageView
 						android:src="@drawable/footer_chat"
-						android:contentDescription="@string/content_description_chat"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:padding="15dp"
@@ -215,10 +202,8 @@
 						style="@style/font18"
 						android:layout_width="20dp"
 						android:layout_height="20dp"
-						android:layout_margin="20dp"
+						android:layout_margin="15dp"
 						android:gravity="center"
-						android:layout_alignParentTop="true"
-						android:layout_alignParentRight="true"
 						android:visibility="gone"/>
 
 				</RelativeLayout>

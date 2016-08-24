@@ -15,15 +15,11 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-import org.linphone.LinphoneManager;
+import java.net.URL;
+
 import org.linphone.R;
-import org.linphone.core.LinphoneXmlRpcRequest;
-import org.linphone.core.LinphoneXmlRpcRequest.LinphoneXmlRpcRequestListener;
-import org.linphone.core.LinphoneXmlRpcRequestImpl;
-import org.linphone.core.LinphoneXmlRpcSession;
-import org.linphone.core.LinphoneXmlRpcSessionImpl;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -34,16 +30,16 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+import org.linphone.xmlrpc.XMLRPCCallback;
+import org.linphone.xmlrpc.XMLRPCClient;
+import org.linphone.xmlrpc.XMLRPCException;
+import org.linphone.xmlrpc.XMLRPCServerException;
 /**
  * @author Sylvain Berfini
  */
-public class CreateAccountActivationFragment extends Fragment implements LinphoneXmlRpcRequestListener {
-	private String username, password;
+public class CreateAccountActivationFragment extends Fragment {
+	private String username;
 	private Handler mHandler = new Handler();
-	private Button checkAccount;
-	private LinphoneXmlRpcSession xmlRpcSession;
-	private LinphoneXmlRpcRequest xmlRpcRequest;
-	private Runnable runNotOk, runOk, runNotReachable;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,59 +47,63 @@ public class CreateAccountActivationFragment extends Fragment implements Linphon
 		View view = inflater.inflate(R.layout.assistant_account_creation_activation, container, false);
 		
 		username = getArguments().getString("Username");
-		password = getArguments().getString("Password");
-
-		checkAccount = (Button) view.findViewById(R.id.assistant_check);
+		
+		Button checkAccount = (Button) view.findViewById(R.id.assistant_check);
 		checkAccount.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				checkAccount.setEnabled(false);
 				isAccountVerified(username);
 			}
 		});
-
-		runNotOk = new Runnable() {
-			public void run() {
-				checkAccount.setEnabled(true);
-				Toast.makeText(getActivity(), getString(R.string.assistant_account_not_validated), Toast.LENGTH_LONG).show();
-			}
-		};
-		runOk = new Runnable() {
-			public void run() {
-				checkAccount.setEnabled(true);
-				AssistantActivity.instance().saveCreatedAccount(username,password,null, getString(R.string.default_domain),null);
-				AssistantActivity.instance().isAccountVerified(username);
-			}
-		};
-		runNotReachable = new Runnable() {
+		
+		return view;
+	}	
+	
+	private void isAccountVerified(final String username) {
+		final Runnable runNotReachable = new Runnable() {
 			public void run() {
 				Toast.makeText(getActivity(), getString(R.string.wizard_server_unavailable), Toast.LENGTH_LONG).show();
 			}
 		};
 		
-		xmlRpcSession = new LinphoneXmlRpcSessionImpl(LinphoneManager.getLcIfManagerNotDestroyedOrNull(), getString(R.string.wizard_url));
-		xmlRpcRequest = new LinphoneXmlRpcRequestImpl("check_account_validated", LinphoneXmlRpcRequest.ArgType.Int);
-		xmlRpcRequest.setListener(this);
-		
-		return view;
-	}
+		try {
+			XMLRPCClient client = new XMLRPCClient(new URL(getString(R.string.wizard_url)));
+			
+			XMLRPCCallback listener = new XMLRPCCallback() {
+				Runnable runNotOk = new Runnable() {
+    				public void run() {
+    					Toast.makeText(getActivity(), getString(R.string.assistant_account_not_validated), Toast.LENGTH_LONG).show();
+					}
+	    		};
+	    		
+	    		Runnable runOk = new Runnable() {
+    				public void run() {
+    					AssistantActivity.instance().isAccountVerified(username);
+					}
+	    		};
+	    		
+			    public void onResponse(long id, Object result) {
+			    	int answer = (Integer) result;
+			    	if (answer != 1) {
+			    		mHandler.post(runNotOk);
+			    	} else {
+			    		mHandler.post(runOk);
+			    	}
+			    }
+			    
+			    public void onError(long id, XMLRPCException error) {
+			    	mHandler.post(runNotReachable);
+			    }
+			   
+			    public void onServerError(long id, XMLRPCServerException error) {
+			    	mHandler.post(runNotReachable);
+			    }
+			};
 
-	@Override
-	public void onXmlRpcRequestResponse(LinphoneXmlRpcRequest request) {		
-		if (request.getStatus() == LinphoneXmlRpcRequest.Status.Ok) {
-			int response = request.getIntResponse();
-			if (response != 1) {
-				mHandler.post(runNotOk);
-			} else {
-				mHandler.post(runOk);
-			}
-		} else if (request.getStatus() == LinphoneXmlRpcRequest.Status.Failed) {
+		    client.callAsync(listener, "check_account_validated", username + "@" + getString(R.string.default_domain));
+		} 
+		catch(Exception ex) {
 			mHandler.post(runNotReachable);
 		}
-	}
-	
-	private void isAccountVerified(final String username) {
-		xmlRpcRequest.addStringArg(username + "@" + getString(R.string.default_domain));
-		xmlRpcSession.sendRequest(xmlRpcRequest);
 	}
 }

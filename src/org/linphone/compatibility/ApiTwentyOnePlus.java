@@ -1,7 +1,6 @@
 package org.linphone.compatibility;
 
 import org.linphone.R;
-
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -25,7 +24,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 /**
  * @author Sylvain Berfini
@@ -33,7 +32,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 @TargetApi(21)
 public class ApiTwentyOnePlus {
 
-	@SuppressWarnings("deprecation")
 	public static Notification createMessageNotification(Context context,
 			int msgCount, String msgSender, String msg, Bitmap contactIcon,
 			PendingIntent intent) {
@@ -55,7 +53,6 @@ public class ApiTwentyOnePlus {
 			.setCategory(Notification.CATEGORY_MESSAGE)
 			.setVisibility(Notification.VISIBILITY_PRIVATE)
 			.setPriority(Notification.PRIORITY_HIGH)
-			.setNumber(msgCount)
 			.build();
 
 		return notif;

@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+
 	<LinearLayout
 		android:id="@+id/top_bar"
 		android:orientation="horizontal"
@@ -16,7 +17,6 @@
 			android:id="@+id/back"
 			android:src="@drawable/back"
 			android:background="@drawable/toolbar_button"
-			android:contentDescription="@string/content_description_back"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="0.2"
@@ -31,18 +31,7 @@
 			android:id="@+id/add_contact"
 			android:src="@drawable/contact_add"
 			android:background="@drawable/toolbar_button"
-			android:contentDescription="@string/content_description_add_contact"
-			android:layout_width="0dp"
-			android:layout_height="match_parent"
-			android:layout_weight="0.2"
-			android:padding="15dp"/>
-
-		<ImageView
-			android:id="@+id/goto_contact"
-			android:visibility="gone"
-			android:src="@drawable/contact"
-			android:background="@drawable/toolbar_button"
-			android:contentDescription="@string/content_description_contacts"
+			android:contentDescription="@string/content_description_edit"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="0.2"
@@ -57,11 +46,13 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center"
-			android:padding="20dp"
+			android:padding="10dp"
 			android:orientation="vertical">
 
 			<RelativeLayout
 				android:id="@+id/avatar_layout"
+				android:layout_marginTop="20dp"
+				android:layout_marginBottom="10dp"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:gravity="center">
@@ -84,7 +75,7 @@
 			<TextView
 				android:id="@+id/contact_name"
 				style="@style/font5"
-				android:gravity="center_horizontal"
+				android:singleLine="true"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"/>
 
@@ -97,13 +88,13 @@
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:padding="10dp"
 				android:gravity="center"
 				android:orientation="horizontal">
 
 				<ImageView
 					android:id="@+id/call"
 					android:src="@drawable/call_start_body_default"
-					android:contentDescription="@string/content_description_call"
 					android:layout_width="60dp"
 					android:layout_height="60dp"
 					android:layout_margin="10dp"/>
@@ -111,7 +102,6 @@
 				<ImageView
 					android:id="@+id/chat"
 					android:src="@drawable/chat_start_body_default"
-					android:contentDescription="@string/content_description_chat"
 					android:layout_width="60dp"
 					android:layout_height="60dp"
 					android:layout_margin="10dp"/>

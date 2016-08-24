@@ -7,19 +7,33 @@ contact="Linphone Android" <sip:linphone.android@unknown-host>
 use_info=0
 use_ipv6=0
 keepalive_period=30000
+sip_port=5060
 
 [video]
 size=vga
 
+[video_codec_0]
+mime=VP8
+rate=90000
+enabled=1
+
+[video_codec_1]
+mime=H264
+rate=90000
+enabled=1
+recv_fmtp=profile-level-id=428014
+
 [app]
+sharing_server=https://www.linphone.org:444/lft.php
 tunnel=disabled
 push_notification=1
-debug=0
 
 [tunnel]
 host=
 port=443
-
-[misc]
-log_collection_upload_server_url=https://www.linphone.org:444/lft.php
-file_transfer_server_url=https://www.linphone.org:444/lft.php
+## RTP settings
+[rtp]
+#Audio RTP (UDP) port
+audio_rtp_port=7078
+#Video RTP (UDP) port
+video_rtp_port=9078

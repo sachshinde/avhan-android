@@ -14,16 +14,15 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 package org.linphone.tutorials;
 
-import org.linphone.R;
 import org.linphone.core.LinphoneCoreException;
 import org.linphone.core.tutorials.TutorialNotifier;
 import org.linphone.core.tutorials.TutorialRegistration;
-import org.linphone.mediastream.Log;
 
+import org.linphone.R;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -98,7 +97,7 @@ public class TutorialRegistrationActivity extends TutorialHelloWorldActivity {
 						sipAddressWidget.getText().toString(),
 						sipPasswordWidget.getText().toString());
 			} catch (LinphoneCoreException e) {
-				Log.e(e);
+				e.printStackTrace();
 				outputText.setText(e.getMessage() +"\n"+outputText.getText());
 			}
 		}

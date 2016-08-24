@@ -16,13 +16,13 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 import org.linphone.LinphonePreferences.AccountBuilder;
 import org.linphone.core.LinphoneCore;
 import org.linphone.core.LinphoneCoreException;
-import org.linphone.mediastream.Log;
+
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -84,6 +84,7 @@ public class PreferencesMigrator {
 		mNewPrefs.setPushNotificationRegistrationID(getPrefString(R.string.push_reg_id_key, null));
 		mNewPrefs.setDebugEnabled(getPrefBoolean(R.string.pref_debug_key, false));
 		mNewPrefs.setBackgroundModeEnabled(getPrefBoolean(R.string.pref_background_mode_key, true));
+		mNewPrefs.setAnimationsEnabled(getPrefBoolean(R.string.pref_animation_enable_key, false));
 		mNewPrefs.setAutoStart(getPrefBoolean(R.string.pref_autostart_key, false));
 		mNewPrefs.setSharingPictureServerUrl(getPrefString(R.string.pref_image_sharing_server_key, null));
 		mNewPrefs.setRemoteProvisioningUrl(getPrefString(R.string.pref_remote_provisioning_key, null));
@@ -154,7 +155,7 @@ public class PreferencesMigrator {
 			try {
 				builder.saveNewAccount();
 			} catch (LinphoneCoreException e) {
-				Log.e(e);
+				e.printStackTrace();
 			}
 			
 			if (isDefaultAccount) {

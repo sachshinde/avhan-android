@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,12 +28,12 @@ import org.linphone.core.LinphoneAddress;
 import org.linphone.core.LinphoneCallLog;
 import org.linphone.core.LinphoneCallLog.CallStatus;
 
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -53,7 +53,7 @@ import android.widget.TextView;
 /**
  * @author Sylvain Berfini
  */
-public class HistoryListFragment extends Fragment implements OnClickListener, OnItemClickListener, ContactsUpdatedListener {
+public class HistoryListFragment extends Fragment implements OnClickListener, OnItemClickListener {
 	private ListView historyList;
 	private LayoutInflater mInflater;
 	private TextView noCallHistory, noMissedCallHistory;
@@ -120,19 +120,6 @@ public class HistoryListFragment extends Fragment implements OnClickListener, On
 		}
 	}
 
-	public void displayFirstLog(){
-		if (mLogs != null && mLogs.size() > 0) {
-			LinphoneCallLog log = mLogs.get(0);
-			if (log.getDirection() == CallDirection.Incoming) {
-				LinphoneActivity.instance().displayHistoryDetail(mLogs.get(0).getFrom().toString(), mLogs.get(0));
-			} else {
-				LinphoneActivity.instance().displayHistoryDetail(mLogs.get(0).getTo().toString(), mLogs.get(0));
-			}
-		} else {
-			LinphoneActivity.instance().displayEmptyFragment();
-		}
-	}
-
 	private void removeCallLogs(){
 		int size = historyList.getAdapter().getCount();
 		for(int i=0; i<size; i++) {
@@ -157,9 +144,11 @@ public class HistoryListFragment extends Fragment implements OnClickListener, On
 	public void enabledDeleteButton(Boolean enabled){
 		if(enabled){
 			delete.setEnabled(true);
+			delete.setAlpha(1f);
 		} else {
 			if (getNbItemsChecked() == 0){
 				delete.setEnabled(false);
+				delete.setAlpha(0.2f);
 			}
 		}
 	}
@@ -199,7 +188,6 @@ public class HistoryListFragment extends Fragment implements OnClickListener, On
 	@Override
 	public void onResume() {
 		super.onResume();
-		ContactsManager.addContactsListener(this);
 
 		if (LinphoneActivity.isInstanciated()) {
 			LinphoneActivity.instance().selectMenu(FragmentsAvailable.HISTORY_LIST);
@@ -210,19 +198,8 @@ public class HistoryListFragment extends Fragment implements OnClickListener, On
 		mLogs = Arrays.asList(LinphoneManager.getLc().getCallLogs());
 		if (!hideHistoryListAndDisplayMessageIfEmpty()) {
 			historyList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-			historyList.setAdapter(new CallHistoryAdapter(getActivity().getApplicationContext()));
+			historyList.setAdapter(new CallHistoryAdapter(getActivity()));
 		}
-	}
-	
-	@Override
-	public void onPause() {
-		ContactsManager.removeContactsListener(this);
-		super.onPause();
-	}
-
-	@Override
-	public void onContactsUpdated() {
-		historyList.setAdapter(new CallHistoryAdapter(getActivity().getApplicationContext()));
 	}
 
 	@Override
@@ -256,7 +233,7 @@ public class HistoryListFragment extends Fragment implements OnClickListener, On
 			}
 
 			final Dialog dialog = LinphoneActivity.instance().displayDialog(getString(R.string.delete_text));
-			Button delete = (Button) dialog.findViewById(R.id.delete_button);
+			Button delete = (Button) dialog.findViewById(R.id.delete);
 			Button cancel = (Button) dialog.findViewById(R.id.cancel);
 
 			delete.setOnClickListener(new OnClickListener() {
@@ -340,36 +317,15 @@ public class HistoryListFragment extends Fragment implements OnClickListener, On
 		topBar.setVisibility(View.VISIBLE);
 
 		refresh();
-		if (!hideHistoryListAndDisplayMessageIfEmpty()) {
+		if (!hideHistoryListAndDisplayMessageIfEmpty()){
 			historyList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 			historyList.setAdapter(new CallHistoryAdapter(getActivity().getApplicationContext()));
-		}
-		if (getResources().getBoolean(R.bool.isTablet)) {
-			displayFirstLog();
 		}
 	}
 
 	class CallHistoryAdapter extends  BaseAdapter {
-		private class ViewHolder {
-			public TextView contact;
-			public ImageView detail;
-			public CheckBox select;
-			public ImageView callDirection;
-			public ImageView contactPicture;
-			
-			public ViewHolder(View view) {
-				contact = (TextView) view.findViewById(R.id.sip_uri);
-				detail = (ImageView) view.findViewById(R.id.detail);
-				select = (CheckBox) view.findViewById(R.id.delete);
-				callDirection = (ImageView) view.findViewById(R.id.icon);
-				contactPicture = (ImageView) view.findViewById(R.id.contact_picture);
-			}
-		}
-		
 		CallHistoryAdapter(Context aContext) {
-		
 		}
-		
 		public int getCount() {
 			return mLogs.size();
 		}
@@ -418,20 +374,23 @@ public class HistoryListFragment extends Fragment implements OnClickListener, On
 
 		public View getView(final int position, View convertView, ViewGroup parent) {
 			View view = null;
-			ViewHolder holder = null;
-			
+			ViewHolder holder;
 			if (convertView != null) {
 				view = convertView;
 				holder = (ViewHolder) view.getTag();
 			} else {
 				view = mInflater.inflate(R.layout.history_cell, parent,false);
-				holder = new ViewHolder(view);
-				view.setTag(holder);
+				holder = new ViewHolder();
+				holder.contact = (TextView) view.findViewById(R.id.sip_uri);
+				holder.detail = (ImageView) view.findViewById(R.id.detail);
+				holder.select = (CheckBox) view.findViewById(R.id.delete);
+				holder.callDirection = (ImageView) view.findViewById(R.id.icon);
+				holder.contactPicture = (ImageView) view.findViewById(R.id.contact_picture);
 			}
 
 			final LinphoneCallLog log = mLogs.get(position);
 			long timestamp = log.getTimestamp();
-			LinphoneAddress address;
+			final LinphoneAddress address;
 
 			holder.contact.setSelected(true); // For automated horizontal scrolling of long texts
 
@@ -468,21 +427,12 @@ public class HistoryListFragment extends Fragment implements OnClickListener, On
 				holder.callDirection.setImageResource(R.drawable.call_status_outgoing);
 			}
 
-			LinphoneContact c = ContactsManager.getInstance().findContactFromAddress(address);
+			Contact c = ContactsManager.getInstance().findContactWithAddress(getActivity().getContentResolver(), address);
 			String displayName = null;
-			final String sipUri = address.asString();
-			if (c != null) {
-				displayName = c.getFullName();
-				if (c.hasPhoto()) {
-					Bitmap photo = c.getPhoto();
-					if (photo != null) {
-						holder.contactPicture.setImageBitmap(photo);
-					} else {
-						LinphoneUtils.setImagePictureFromUri(getActivity(), holder.contactPicture, c.getPhotoUri(), c.getThumbnailUri());
-					}
-				} else {
-					LinphoneUtils.setImagePictureFromUri(getActivity(), holder.contactPicture, c.getPhotoUri(), c.getThumbnailUri());
-				}
+			final String sipUri = address.asStringUriOnly();
+			if(c != null){
+				displayName = c.getName();
+				LinphoneUtils.setImagePictureFromUri(view.getContext(),holder.contactPicture,c.getPhotoUri(),c.getThumbnailUri());
 			} else {
 				holder.contactPicture.setImageResource(R.drawable.avatar);
 			}
@@ -492,6 +442,7 @@ public class HistoryListFragment extends Fragment implements OnClickListener, On
 			} else {
 				holder.contact.setText(displayName);
 			}
+			//view.setTag(sipUri);
 
 			if (isEditMode) {
 				holder.select.setVisibility(View.VISIBLE);
@@ -534,7 +485,16 @@ public class HistoryListFragment extends Fragment implements OnClickListener, On
 					}
 				});
 			}
+			view.setTag(holder);
 			return view;
 		}
+	}
+
+	static class ViewHolder {
+		TextView contact;
+		ImageView detail;
+		CheckBox select;
+		ImageView callDirection;
+		ImageView contactPicture;
 	}
 }

@@ -4,13 +4,85 @@
 	android:layout_height="match_parent"
 	android:background="@color/colorH"
 	android:orientation="vertical" >
+	
+	
+    <!-- <LinearLayout        
+		android:id="@+id/top_bar1"
+		android:orientation="horizontal"
+		android:baselineAligned="false"		
+		android:layout_width="match_parent"
+		
+		android:layout_height="82dp">
+
+		<RelativeLayout
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="0.2">
+
+			<ImageView
+				android:id="@+id/video_call"
+				android:src="@drawable/video_call"
+				android:contentDescription="@string/content_description_video_call"				
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+			
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="0.2">
+
+			<ImageView
+				android:id="@+id/asc_call"
+				android:src="@drawable/asc_call"
+				android:contentDescription="@string/content_description_ASC_call"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+			
+		</RelativeLayout>
+		
+		<RelativeLayout
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="0.2">
+
+		
+		<ImageView
+			android:id="@+id/chat"
+			android:src="@drawable/chat1"
+			android:contentDescription="@string/content_description_chat"			
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+		
+		</RelativeLayout>
+		
+		<RelativeLayout
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="0.2">
+
+		<ImageView
+			android:id="@+id/push_content"
+			android:src="@drawable/push_content"
+			android:contentDescription="@string/content_description_push_content"			
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+			
+		</RelativeLayout>
+		
+	</LinearLayout> -->
+    
 
 	<LinearLayout
+	    android:baselineAligned="false"
 		android:id="@+id/top_bar"
-		android:orientation="horizontal"
-		android:background="@color/colorF"
+		android:orientation="horizontal"		
 		android:layout_width="match_parent"
-		android:layout_height="60dp">
+		android:layout_height="52dp"
+		android:padding="1px">
 
 		<RelativeLayout
 			android:layout_width="0dp"
@@ -19,19 +91,19 @@
 
 			<ImageView
 				android:id="@+id/all_contacts"
-				android:src="@drawable/contacts_all"
+				android:src="@drawable/phone"
 				android:background="@drawable/toolbar_button"
-				android:contentDescription="@string/content_description_all_contacts"
-				android:padding="15dp"
+				android:contentDescription="@string/content_description_all_contacts"				
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"/>
 
 			<View
-				android:id="@+id/all_contacts_select"
-				android:background="@color/colorA"
-				android:layout_width="match_parent"
-				android:layout_height="5dp"
-				android:layout_alignParentBottom="true"/>
+			    android:id="@+id/all_contacts_select"
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:layout_alignParentBottom="true"
+			     />
+
 		</RelativeLayout>
 
 		<RelativeLayout
@@ -41,58 +113,99 @@
 
 			<ImageView
 				android:id="@+id/linphone_contacts"
-				android:src="@drawable/contacts_sip"
+				android:src="@drawable/asc_contact"
 				android:background="@drawable/toolbar_button"
 				android:contentDescription="@string/content_description_linphone_contacts"
-				android:gravity="center"
-				android:padding="15dp"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"/>
 
 			<View
-				android:id="@+id/linphone_contacts_select"
-				android:background="@color/colorA"
-				android:layout_width="match_parent"
-				android:layout_height="5dp"
-				android:visibility="gone"
-				android:layout_alignParentBottom="true"/>
+			    android:id="@+id/linphone_contacts_select"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_alignParentBottom="true"
+			    android:visibility="gone" />
+
 		</RelativeLayout>
+		<!-- <RelativeLayout
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="0.2">
 
+			<ImageView
+				android:id="@+id/dealer_contacts"
+				android:src="@drawable/dealer"
+				android:background="@drawable/toolbar_button"
+				android:contentDescription="@string/content_description_linphone_contacts"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+			<View
+			    android:id="@+id/dealer_contacts_select"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_alignParentBottom="true"
+			    android:visibility="gone" />
+
+		</RelativeLayout> -->
+
+	<RelativeLayout
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="0.2">
+
+		<ImageView
+			android:id="@+id/newContact1"
+			android:src="@drawable/dealer"
+			android:background="@drawable/toolbar_button"
+			android:contentDescription="@string/content_description_edit"			
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
 		<View
-			android:layout_width="0dp"
-			android:layout_height="match_parent"
-			android:layout_weight="0.2"/>
+			    android:id="@+id/dealer_contacts_select"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_alignParentBottom="true"
+			     />
 
-		<ImageView
-			android:id="@+id/newContact"
-			android:src="@drawable/contact_add"
-			android:background="@drawable/toolbar_button"
-			android:contentDescription="@string/content_description_new_contact"
+		
+		</RelativeLayout>
+		
+	<RelativeLayout
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="0.2"
-			android:padding="15dp"/>
-
+			android:layout_weight="0.2">
 		<ImageView
-			android:id="@+id/edit"
-			android:src="@drawable/edit_list_button"
+			android:id="@+id/customer"
+			android:src="@drawable/customer"
 			android:background="@drawable/toolbar_button"
-			android:contentDescription="@string/content_description_edit_list"
-			android:layout_width="0dp"
-			android:layout_height="match_parent"
-			android:layout_weight="0.2"
-			android:padding="15dp"/>
+			android:contentDescription="@string/content_description_edit"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>	
+			<View
+			    android:id="@+id/customer_contacts_select"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_alignParentBottom="true"
+			     />
+		
+		</RelativeLayout>
+		
 	</LinearLayout>
 
-	<include layout="@layout/edit_list"/>
+	<include
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    layout="@layout/edit_list" />
 
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_margin="10dp">
+		android:layout_margin="10dp"
+	 >
 
 		<EditText
-            android:contentDescription="@string/content_description_search_contact"
+            android:contentDescription="@string/content_description_search"
 			android:textCursorDrawable="@null"
 			android:id="@+id/searchField"
 			android:layout_width="match_parent"
@@ -100,18 +213,20 @@
 			android:textColor="@android:color/black"
 			android:background="@drawable/resizable_textfield"
 			android:gravity="center"
-			android:paddingRight="5dp"
-			android:inputType="textPersonName"/>
+			
+			android:inputType="textPersonName"
+			/>
 
 		<ImageView
+			android:contentDescription="@string/content_description_cancel"
 			android:id="@+id/clearSearchField"
 			android:layout_width="30dp"
 			android:layout_height="30dp"
 			android:src="@drawable/clean_field_default"
 			android:layout_centerVertical="true"
-			android:layout_alignParentRight="true"
 			android:paddingLeft="5dp"
-			android:paddingRight="5dp"/>
+			android:paddingRight="5dp"
+			/>
 
 	</RelativeLayout>
 
@@ -124,22 +239,32 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:divider="@color/colorE"
-			android:fastScrollEnabled="true"
 			android:fastScrollAlwaysVisible="true"
-			android:dividerHeight="1dp" />
-		
-		<ProgressBar
-			android:id="@+id/contactsFetchInProgress"
-			style="?android:attr/progressBarStyle"
-			android:layout_centerHorizontal="true"
-			android:layout_centerVertical="true"
-			android:visibility="gone"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
+			android:fastScrollEnabled="true"
+			android:dividerHeight="2dp" />
 
 		<TextView
 			android:id="@+id/noSipContact"
-			android:text="@string/no_sip_contact"
+			android:text="@string/no_asc"
+			style="@style/font6"
+			android:visibility="gone"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:layout_centerVertical="true"/>
+		
+		<TextView
+			android:id="@+id/noDealerContact"
+			android:text="@string/no_dealers"
+			style="@style/font6"
+			android:visibility="gone"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:layout_centerVertical="true"/>
+		<TextView
+			android:id="@+id/noCustomerContact"
+			android:text="@string/no_customers"
 			style="@style/font6"
 			android:visibility="gone"
 			android:layout_width="match_parent"

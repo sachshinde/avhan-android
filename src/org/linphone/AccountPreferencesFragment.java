@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 import java.util.ArrayList;
@@ -23,9 +23,9 @@ import java.util.List;
 
 import org.linphone.LinphonePreferences.AccountBuilder;
 import org.linphone.core.LinphoneCoreException;
-import org.linphone.mediastream.Log;
 import org.linphone.ui.PreferencesListFragment;
 
+import org.linphone.R;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -35,6 +35,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
+import android.text.InputType;
 import android.view.WindowManager;
 
 /**
@@ -53,7 +54,8 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 		mPrefs = LinphonePreferences.instance();
 	}
 	
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) 
+	{
 		super.onCreate(savedInstanceState);
 		
 		PreferenceScreen screen = getPreferenceScreen();
@@ -68,7 +70,7 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 	
-	public static boolean isEditTextEmpty(String s) {
+	public static boolean isEditTextEmpty(String s){
 	      return s.equals("");  // really empty.          
 	}
 	
@@ -174,7 +176,7 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 			}
 			preference.setSummary(newValue.toString());
 			return true;
-		}
+		}		
 	};
 	OnPreferenceChangeListener prefixChangedListener = new OnPreferenceChangeListener() {
 		@Override
@@ -232,14 +234,6 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 			return true;
 		}
 	};
-	OnPreferenceChangeListener friendlistSubscribeListener = new OnPreferenceChangeListener() {
-		@Override
-		public boolean onPreferenceChange(Preference preference, Object newValue) {
-			boolean value = (Boolean) newValue;
-			LinphoneManager.getInstance().subscribeFriendList(value);
-			return true;
-		}
-	};
 	OnPreferenceChangeListener disableChangedListener = new OnPreferenceChangeListener() {
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -278,6 +272,7 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 		
     	PreferenceCategory account = (PreferenceCategory) getPreferenceScreen().findPreference(getString(R.string.pref_sipaccount_key));
     	EditTextPreference username = (EditTextPreference) account.getPreference(0);
+    	username.getEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 		username.setOnPreferenceChangeListener(usernameChangedListener);
 		if (!isNewAccount){
 			username.setText(mPrefs.getAccountUsername(n));
@@ -285,6 +280,7 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 		}
 
     	EditTextPreference userid = (EditTextPreference) account.getPreference(1);
+    	userid.getEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 		userid.setOnPreferenceChangeListener(useridChangedListener);
 		if (!isNewAccount){
 			userid.setText(mPrefs.getAccountUserId(n));
@@ -292,12 +288,14 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 		}
     	
     	EditTextPreference password = (EditTextPreference) account.getPreference(2);
+        password.getEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 		password.setOnPreferenceChangeListener(passwordChangedListener);
 		if(!isNewAccount){
 			password.setText(mPrefs.getAccountPassword(n));
 		}
     	
     	EditTextPreference domain = (EditTextPreference) account.getPreference(3);
+    	domain.getEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
     	domain.setOnPreferenceChangeListener(domainChangedListener);
 		if (!isNewAccount){
 			domain.setText(mPrefs.getAccountDomain(n));
@@ -305,6 +303,7 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 		}
     	
     	EditTextPreference displayName = (EditTextPreference) account.getPreference(4);
+    	displayName.getEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
 		displayName.setOnPreferenceChangeListener(displayNameChangedListener);
 		if (!isNewAccount){
 			displayName.setText(mPrefs.getAccountDisplayName(n));
@@ -320,6 +319,7 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 		}
     	
 		mProxyPreference = (EditTextPreference) advanced.getPreference(1);
+		mProxyPreference.getEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 		mProxyPreference.setOnPreferenceChangeListener(proxyChangedListener);
 		if (!isNewAccount){
 			mProxyPreference.setText(mPrefs.getAccountProxy(n));
@@ -365,12 +365,6 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 		if(!isNewAccount){
 			escape.setChecked(mPrefs.getReplacePlusByZeroZero(n));
 		}
-
-		CheckBoxPreference friendlistSubscribe = (CheckBoxPreference) advanced.getPreference(8);
-		friendlistSubscribe.setOnPreferenceChangeListener(friendlistSubscribeListener);
-		if(!isNewAccount){
-			escape.setChecked(mPrefs.getReplacePlusByZeroZero(n));
-		}
     	
     	PreferenceCategory manage = (PreferenceCategory) getPreferenceScreen().findPreference(getString(R.string.pref_manage_key));
     	final CheckBoxPreference disable = (CheckBoxPreference) manage.getPreference(0);
@@ -398,7 +392,7 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 		}
 
     	final Preference delete = manage.getPreference(2);
-    	delete.setEnabled(!isNewAccount);
+    	delete.setEnabled(true);
     	delete.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 	        public boolean onPreferenceClick(Preference preference) {
 	        	mPrefs.deleteAccount(n);
@@ -443,16 +437,7 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 		values.toArray(contents);
 		pref.setEntryValues(contents);
 	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		if (LinphoneActivity.isInstanciated()) {
-			LinphoneActivity.instance().selectMenu(FragmentsAvailable.SETTINGS);
-		}
-	}
-
+	
 	@Override
 	public void onPause() {
 		super.onPause();		
@@ -462,7 +447,7 @@ public class AccountPreferencesFragment extends PreferencesListFragment {
 					builder.saveNewAccount();
 				}
 			} catch (LinphoneCoreException e) {
-				Log.e(e);
+				e.printStackTrace();
 			}
 			LinphoneActivity.instance().isNewProxyConfig();
 			LinphoneManager.getLc().refreshRegisters();

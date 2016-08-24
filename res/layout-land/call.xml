@@ -225,48 +225,28 @@
 						android:id="@+id/dialer"
 						android:src="@drawable/footer_dialer"
 						android:background="@color/colorC"
-						android:contentDescription="@string/content_description_numpad"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:layout_weight="1"
-						android:padding="15dp" />
+						android:padding="20dp" />
 
 					<ImageView
 						android:id="@+id/hang_up"
 						android:src="@drawable/call_hangup"
 						android:background="@drawable/hangup"
-						android:contentDescription="@string/content_description_hang_up"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:layout_weight="0.5"
-						android:padding="12dp"/>
+						android:padding="15dp"/>
 
-					<RelativeLayout
-						android:background="@drawable/footer_button"
+					<ImageView
+						android:id="@+id/chat"
+						android:src="@drawable/footer_chat"
+						android:background="@color/colorC"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
-						android:layout_weight="1">
-						
-						<ImageView
-							android:id="@+id/chat"
-							android:src="@drawable/footer_chat"
-							android:background="@color/colorC"
-							android:contentDescription="@string/content_description_chat_button"
-							android:layout_width="match_parent"
-							android:layout_height="wrap_content"
-							android:padding="15dp"
-							android:layout_centerInParent="true"/>
-	
-						<TextView
-							android:id="@+id/missed_chats"
-							android:background="@drawable/history_chat_indicator"
-							style="@style/font18"
-							android:layout_width="20dp"
-							android:layout_height="20dp"
-							android:layout_margin="15dp"
-							android:gravity="center"
-							android:visibility="gone"/>
-					</RelativeLayout>
+						android:layout_weight="1"
+						android:padding="18dp"/>
 				</LinearLayout>
 
 
@@ -277,6 +257,7 @@
 					android:orientation="horizontal">
 
 					<RelativeLayout
+						android:background="@drawable/button_background"
 						android:layout_width="match_parent"
 						android:layout_height="match_parent"
 						android:layout_weight="1">
@@ -285,8 +266,7 @@
 							android:id="@+id/video"
 							android:src="@drawable/camera_default"
 							android:background="@drawable/button_background"
-							android:contentDescription="@string/content_description_switch_video"
-							android:padding="20dp"
+							android:padding="22dp"
 							android:layout_width="match_parent"
 							android:layout_height="match_parent"/>
 
@@ -305,8 +285,7 @@
 						android:id="@+id/micro"
 						android:src="@drawable/micro_default"
 						android:background="@drawable/button_background"
-						android:contentDescription="@string/content_description_toggle_micro"
-						android:padding="10dp"
+						android:padding="15dp"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:layout_weight="1" />
@@ -315,8 +294,7 @@
 						android:id="@+id/speaker"
 						android:src="@drawable/speaker_default"
 						android:background="@drawable/button_background"
-						android:contentDescription="@string/content_description_toggle_speaker"
-						android:padding="15dp"
+						android:padding="18dp"
 						android:layout_width="match_parent"
 						android:layout_height="match_parent"
 						android:layout_weight="1" />
@@ -325,7 +303,6 @@
 						android:id="@+id/audio_route"
 						android:src="@drawable/routes_default"
 						android:background="@drawable/button_background"
-						android:contentDescription="@string/content_description_audio_route"
 						android:visibility="gone"
 						android:padding="20dp"
 						android:layout_width="match_parent"
@@ -336,8 +313,7 @@
 						android:id="@+id/options"
 						android:src="@drawable/options_default"
 						android:background="@drawable/button_background"
-						android:contentDescription="@string/content_description_call_options"
-						android:padding="15dp"
+						android:padding="18dp"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:layout_weight="1" />
@@ -370,8 +346,7 @@
 					android:id="@+id/route_bluetooth"
 					android:src="@drawable/route_bluetooth"
 					android:background="@drawable/button_background"
-					android:contentDescription="@string/content_description_bluetooth"
-					android:padding="15dp"
+					android:padding="20dp"
 					android:visibility="invisible"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -381,8 +356,7 @@
 					android:id="@+id/add_call"
 					android:src="@drawable/options_add_call"
 					android:background="@drawable/button_background"
-					android:contentDescription="@string/content_description_add_call"
-					android:padding="15dp"
+					android:padding="20dp"
 					android:visibility="invisible"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -413,8 +387,7 @@
 					android:id="@+id/route_earpiece"
 					android:src="@drawable/route_earpiece"
 					android:background="@drawable/button_background"
-					android:contentDescription="@string/content_description_earpiece"
-					android:padding="15dp"
+					android:padding="20dp"
 					android:visibility="invisible"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -424,8 +397,7 @@
 					android:id="@+id/transfer"
 					android:src="@drawable/options_transfer_call"
 					android:background="@drawable/button_background"
-					android:contentDescription="@string/content_description_transfer"
-					android:padding="15dp"
+					android:padding="20dp"
 					android:visibility="invisible"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -455,9 +427,8 @@
 					android:id="@+id/route_speaker"
 					android:src="@drawable/route_speaker"
 					android:background="@drawable/button_background"
-					android:contentDescription="@string/content_description_toggle_speaker"
 					android:visibility="invisible"
-					android:padding="15dp"
+					android:padding="20dp"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_weight="1.4"/>
@@ -466,9 +437,8 @@
 					android:id="@+id/conference"
 					android:src="@drawable/options_start_conference"
 					android:background="@drawable/button_background"
-					android:contentDescription="@string/content_description_conference"
 					android:visibility="invisible"
-					android:padding="15dp"
+					android:padding="20dp"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_weight="1.4"/>

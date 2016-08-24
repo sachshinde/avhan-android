@@ -15,8 +15,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+import org.linphone.R;
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -37,15 +39,20 @@ public class CallAudioFragment extends Fragment {
         View view = inflater.inflate(R.layout.audio, container, false);
         return view;
     }
-	
+
 	@Override
-	public void onStart() {
-		super.onStart();
-		incallActvityInstance = (CallActivity) getActivity();
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		incallActvityInstance = (CallActivity) activity;
 		
 		if (incallActvityInstance != null) {
 			incallActvityInstance.bindAudioFragment(this);
 		}
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
 
 		// Just to be sure we have incall controls
 		if (incallActvityInstance != null) {

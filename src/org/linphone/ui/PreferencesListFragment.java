@@ -15,14 +15,12 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import org.linphone.R;
-import org.linphone.mediastream.Log;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ListFragment;
@@ -70,7 +68,7 @@ public class PreferencesListFragment extends ListFragment {
     }
     
     // Must be provided
-    public PreferencesListFragment() {
+    public PreferencesListFragment(){
         
     }
     
@@ -123,7 +121,7 @@ public class PreferencesListFragment extends ListFragment {
             m.setAccessible(true);
             m.invoke(mPreferenceManager);
         } catch(Exception e) {
-            Log.e("[PreferencesListFragment] onStop " + e);
+            e.printStackTrace();
         }
     }
 
@@ -136,7 +134,7 @@ public class PreferencesListFragment extends ListFragment {
 	        m.setAccessible(true);
 	        m.invoke(mPreferenceManager);
         } catch(Exception e) {
-        	Log.e("[PreferencesListFragment] onDestroy " + e);
+        	e.printStackTrace();
         }
     }
 
@@ -154,7 +152,7 @@ public class PreferencesListFragment extends ListFragment {
             m.setAccessible(true);
             m.invoke(mPreferenceManager, requestCode, resultCode, data);
         } catch(Exception e) {
-            Log.e("[PreferencesListFragment] onActivityResult " + e);
+            e.printStackTrace();
         }
     }
 
@@ -188,7 +186,7 @@ public class PreferencesListFragment extends ListFragment {
             PreferenceManager preferenceManager = c.newInstance(this.getActivity(), FIRST_REQUEST_CODE);
             return preferenceManager;
         } catch(Exception e) {
-            Log.e("[PreferencesListFragment] onCreatePreferenceManager " + e);
+            e.printStackTrace();
             return null;
         }
     }
@@ -215,7 +213,7 @@ public class PreferencesListFragment extends ListFragment {
                 postBindPreferences();
             }
         }catch(Exception e){
-            Log.e("[PreferencesListFragment] setPreferenceScreen " + e);
+            e.printStackTrace();
         }
     }
     
@@ -231,7 +229,7 @@ public class PreferencesListFragment extends ListFragment {
             m.setAccessible(true);
             return (PreferenceScreen) m.invoke(mPreferenceManager);
         } catch(Exception e) {
-            Log.e("[PreferencesListFragment] getPreferenceScreen " + e);
+            e.printStackTrace();
         }
         
         return null;
@@ -250,7 +248,7 @@ public class PreferencesListFragment extends ListFragment {
             PreferenceScreen prefScreen = (PreferenceScreen) m.invoke(mPreferenceManager, getActivity(), preferencesResId, getPreferenceScreen());
             setPreferenceScreen(prefScreen);
         } catch(Exception e) {
-            Log.e("[PreferencesListFragment] addPreferencesFromResource " + e);
+            e.printStackTrace();
         }
     }
     
@@ -263,7 +261,6 @@ public class PreferencesListFragment extends ListFragment {
      */
     public Preference findPreference(CharSequence key) {
         if (mPreferenceManager == null) {
-        	Log.e("[PreferencesListFragment] PreferenceManager is null !");
             return null;
         }
         return mPreferenceManager.findPreference(key);

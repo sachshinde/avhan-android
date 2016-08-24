@@ -4,8 +4,11 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical">
 
-	<TextView
+
+
+<TextView
 		android:text="@string/assistant_remote_provisioning_title"
+		android:contentDescription="@string/content_description_welcome"
 		style="@style/font6"
 		android:textAllCaps="true"
 		android:paddingTop="20dp"
@@ -42,7 +45,7 @@
 			android:background="@drawable/resizable_textfield"
 			android:textColor="@color/colorB"
 			android:textCursorDrawable="@null"
-			android:inputType="textNoSuggestions"
+			android:inputType="textEmailAddress"
 			android:layout_width="match_parent"
 			android:layout_height="40dp"
 			android:paddingLeft="10dp"
@@ -84,7 +87,7 @@
 			android:background="@drawable/resizable_textfield"
 			android:textColor="@color/colorB"
 			android:textCursorDrawable="@null"
-			android:inputType="textUri"
+			android:inputType="textEmailAddress"
 			android:layout_width="match_parent"
 			android:layout_height="40dp"
 			android:paddingLeft="10dp"

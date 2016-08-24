@@ -13,7 +13,7 @@
 		android:layout_height="40dp"
 		tools:layout="@layout/status"/>
 
-	<include layout="@layout/assistant_topbar" android:id="@+id/topbar" />
+	<include layout="@layout/assistant_topbar" android:id="@+id/topbar" android:visibility="gone" />
 
 	<LinearLayout
 		android:id="@+id/fragment_container"

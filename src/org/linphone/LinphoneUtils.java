@@ -14,7 +14,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 package org.linphone;
 
@@ -23,13 +23,10 @@ import static android.view.View.VISIBLE;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -38,14 +35,12 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.linphone.core.LinphoneAddress;
 import org.linphone.core.LinphoneCall;
 import org.linphone.core.LinphoneCall.State;
-import org.linphone.core.LinphoneChatMessage;
 import org.linphone.core.LinphoneCore;
 import org.linphone.core.LinphoneCoreException;
 import org.linphone.core.LinphoneCoreFactory;
@@ -53,9 +48,8 @@ import org.linphone.core.LinphoneProxyConfig;
 import org.linphone.mediastream.Log;
 import org.linphone.mediastream.video.capture.hwconf.Hacks;
 
+
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -65,9 +59,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images;
 import android.telephony.TelephonyManager;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -155,9 +147,9 @@ public final class LinphoneUtils {
 
 			SimpleDateFormat dateFormat;
 			if (isToday(cal)) {
-				dateFormat = new SimpleDateFormat(context.getResources().getString(R.string.today_date_format), Locale.getDefault());
+				dateFormat = new SimpleDateFormat(context.getResources().getString(R.string.today_date_format));
 			} else {
-				dateFormat = new SimpleDateFormat(format, Locale.getDefault());
+				dateFormat = new SimpleDateFormat(format);
 			}
 
 			return dateFormat.format(cal.getTime());
@@ -219,32 +211,32 @@ public final class LinphoneUtils {
 	}
 
 	
-	public static void setImagePictureFromUri(Context c, ImageView view, Uri pictureUri, Uri thumbnailUri) {
-		if (pictureUri == null) {
+	public static void setImagePictureFromUri(Context c, ImageView view, Uri uri, Uri tUri) {
+		if (uri == null) {
 			view.setImageResource(R.drawable.avatar);
 			return;
 		}
-		if (pictureUri.getScheme().startsWith("http")) {
-			Bitmap bm = downloadBitmap(pictureUri);
+		if (uri.getScheme().startsWith("http")) {
+			Bitmap bm = downloadBitmap(uri);
 			if (bm == null) view.setImageResource(R.drawable.avatar);
 			view.setImageBitmap(bm);
 		} else {
 			Bitmap bm = null;
 			try {
-				bm = MediaStore.Images.Media.getBitmap(c.getContentResolver(), pictureUri);
+				bm = MediaStore.Images.Media.getBitmap(c.getContentResolver(),uri);
 			} catch (IOException e) {
-				if (thumbnailUri != null) {
+				if(tUri != null){
 					try {
-						bm = MediaStore.Images.Media.getBitmap(c.getContentResolver(), thumbnailUri);
+						bm = MediaStore.Images.Media.getBitmap(c.getContentResolver(),tUri);
 					} catch (IOException ie) {
+						view.setImageURI(tUri);
 					}
 				}
 			}
-			if (bm != null) {
+			if(bm != null) {
 				view.setImageBitmap(bm);
-			} else {
-				view.setImageResource(R.drawable.avatar);
 			}
+
 		}
 	}
 
@@ -400,7 +392,7 @@ public final class LinphoneUtils {
 		try {
 			Runtime.getRuntime().exec(new String[] { "logcat", "-c" });
 		} catch (IOException e) {
-			Log.e(e);
+			e.printStackTrace();
 		}
 	}
 
@@ -431,7 +423,7 @@ public final class LinphoneUtils {
         StringBuilder sb = new StringBuilder();
 
     	try {
-			p = Runtime.getRuntime().exec(new String[] { "logcat", "-d", "|", "grep", "`adb shell ps | grep " + context.getPackageName() + " | cut -c10-15`" });
+			p = Runtime.getRuntime().exec(new String[] { "logcat", "-d", "|", "grep", "`adb shell ps | grep org.linphone | cut -c10-15`" });
 	    	br = new BufferedReader(new InputStreamReader(p.getInputStream()), 2048);
 
             String line;
@@ -460,108 +452,7 @@ public final class LinphoneUtils {
             }
 
 		} catch (IOException e) {
-			Log.e(e);
-		}
-	}
-
-	public static String getExtensionFromFileName(String fileName) {
-		String extension = null;
-		int i = fileName.lastIndexOf('.');
-		if (i > 0) {
-		    extension = fileName.substring(i+1);
-		}
-		return extension;
-	}
-	
-	public static void recursiveFileRemoval(File root) {
-		if (!root.delete()) {
-			if (root.isDirectory()) {
-				File[] files = root.listFiles();
-		        if (files != null) {
-		            for (File f : files) {
-		            	recursiveFileRemoval(f);
-		            }
-		        }
-			}
-		}
-	}
-	
-	public static String getDisplayableUsernameFromAddress(String sipAddress) {
-		String username = sipAddress;
-		LinphoneCore lc = LinphoneManager.getLcIfManagerNotDestroyedOrNull();
-		if (lc == null) return username;
-		
-		if (username.startsWith("sip:")) {
-			username = username.substring(4);
-		}
-
-		if (username.contains("@")) {
-			String domain = username.split("@")[1];
-			LinphoneProxyConfig lpc = lc.getDefaultProxyConfig();
-			if (lpc != null) {
-				if (domain.equals(lpc.getDomain())) {
-					return username.split("@")[0];
-				}
-			} else {
-				if (domain.equals(LinphoneManager.getInstance().getContext().getString(R.string.default_domain))) {
-					return username.split("@")[0];
-				}
-			}
-		}
-		return username;
-	}
-	
-	public static String getFullAddressFromUsername(String username) {
-		String sipAddress = username;
-		LinphoneCore lc = LinphoneManager.getLcIfManagerNotDestroyedOrNull();
-		if (lc == null) return sipAddress;
-		
-		if (!sipAddress.startsWith("sip:")) {
-			sipAddress = "sip:" + sipAddress;
-		}
-
-		if (!sipAddress.contains("@")) {
-			LinphoneProxyConfig lpc = lc.getDefaultProxyConfig();
-			if (lpc != null) {
-				sipAddress = sipAddress + "@" + lpc.getDomain();
-			} else {
-				sipAddress = sipAddress + "@" + LinphoneManager.getInstance().getContext().getString(R.string.default_domain);
-			}
-		}
-		return sipAddress;
-	}
-	
-	public static void storeImage(Context context, LinphoneChatMessage msg) {
-		if (msg == null || msg.getFileTransferInformation() == null || msg.getAppData() == null) return;
-		File file = new File(Environment.getExternalStorageDirectory(), msg.getAppData());
-		Bitmap bm = BitmapFactory.decodeFile(file.getPath());
-		if (bm == null) return;
-		
-		ContentValues values = new ContentValues();
-        values.put(Images.Media.TITLE, file.getName());
-        String extension = msg.getFileTransferInformation().getSubtype();
-        values.put(Images.Media.MIME_TYPE, "image/" + extension);
-        ContentResolver cr = context.getContentResolver();
-        Uri path = cr.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        
-        OutputStream stream;
-		try {
-			stream = cr.openOutputStream(path);
-			if (extension != null && extension.toLowerCase(Locale.getDefault()).equals("png")) {
-				bm.compress(Bitmap.CompressFormat.PNG, 100, stream);
-			} else {
-				bm.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-			}
-			
-			stream.close();
-			file.delete();
-	        bm.recycle();
-
-	        msg.setAppData(path.toString());
-		} catch (FileNotFoundException e) {
-			Log.e(e);
-		} catch (IOException e) {
-			Log.e(e);
+			e.printStackTrace();
 		}
 	}
 }

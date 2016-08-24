@@ -2,23 +2,25 @@ package org.linphone.compatibility;
 
 import java.util.ArrayList;
 
-import org.linphone.R;
+import org.linphone.mediastream.Log;
 
+import org.linphone.R;
 import android.annotation.TargetApi;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.SipAddress;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Intents.Insert;
-import android.widget.TextView;
 
 /*
 ApiElevenPlus.java
@@ -36,7 +38,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 /**
  * @author Sylvain Berfini
@@ -67,7 +69,6 @@ public class ApiElevenPlus {
 										| Notification.DEFAULT_SOUND
 										| Notification.DEFAULT_VIBRATE)
 						.setWhen(System.currentTimeMillis())
-						.setNumber(msgCount)
 						.setLargeIcon(contactIcon).getNotification();
 
 		return notif;
@@ -117,6 +118,21 @@ public class ApiElevenPlus {
 		
 		return notif;
 	}
+
+	public static void copyTextToClipboard(Context context, String msg) {
+		ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE); 
+	    ClipData clip = android.content.ClipData.newPlainText("Message", msg);
+	    clipboard.setPrimaryClip(clip);
+	}
+
+	public static void setAudioManagerInCallMode(AudioManager manager) {
+		if (manager.getMode() == AudioManager.MODE_IN_COMMUNICATION) {
+			Log.w("---AudioManager: already in MODE_IN_COMMUNICATION, skipping..."); 
+			return;
+		}
+		Log.d("---AudioManager: set mode to MODE_IN_COMMUNICATION");
+		manager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+	}
 	
 	public static Intent prepareAddContactIntent(String displayName, String sipUri) {
 		Intent intent = new Intent(Intent.ACTION_INSERT, Contacts.CONTENT_URI);
@@ -163,14 +179,5 @@ public class ApiElevenPlus {
 		.setWhen(System.currentTimeMillis()).getNotification();
 
 		return notif;
-	}
-
-	@SuppressWarnings("deprecation")
-	public static void setTextAppearance(TextView textview, Context context, int style) {
-		textview.setTextAppearance(context, style);
-	}
-
-	public static void scheduleAlarm(AlarmManager alarmManager, int type, long triggerAtMillis, PendingIntent operation) {
-		alarmManager.set(type, triggerAtMillis, operation);
 	}
 }

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 import static android.content.Intent.ACTION_MAIN;
@@ -23,11 +23,10 @@ import static android.content.Intent.ACTION_MAIN;
 import org.linphone.LinphoneManager;
 import org.linphone.LinphonePreferences;
 import org.linphone.LinphoneService;
-import org.linphone.R;
 import org.linphone.UIThreadDispatcher;
-import org.linphone.core.LinphoneCoreFactory;
 import org.linphone.mediastream.Log;
 
+import org.linphone.R;
 import android.content.Context;
 import android.content.Intent;
 
@@ -43,24 +42,14 @@ public class GCMService extends GCMBaseIntentService {
 		
 	}
 	
-	private void initLogger(Context context) {
-		LinphonePreferences.instance().setContext(context);
-		boolean isDebugEnabled = LinphonePreferences.instance().isDebugEnabled();
-		LinphoneCoreFactory.instance().enableLogCollection(isDebugEnabled);
-		LinphoneCoreFactory.instance().setDebugMode(isDebugEnabled, context.getString(R.string.app_name));
-	}
-	
 	@Override
 	protected void onError(Context context, String errorId) {
-		initLogger(context);
-		Log.e("[Push Notification] Error while registering: " + errorId);
+		Log.e("Error while registering push notification : " + errorId);
 	}
 
 	@Override
 	protected void onMessage(Context context, Intent intent) {
-		initLogger(context);
-		Log.d("[Push Notification] Received");
-		
+		Log.d("Push notification received");
 		if (!LinphoneService.isReady()) {
 			startService(new Intent(ACTION_MAIN).setClass(this, LinphoneService.class));
 		} else if (LinphoneManager.isInstanciated() && LinphoneManager.getLc().getCallsNb() == 0) {
@@ -73,22 +62,19 @@ public class GCMService extends GCMBaseIntentService {
 					}
 				}
 			});
+
 		}
 	}
 
 	@Override
 	protected void onRegistered(Context context, String regId) {
-		initLogger(context);
-		Log.d("[Push Notification] Registered: " + regId);
-		
+		Log.d("Registered push notification : " + regId);
 		LinphonePreferences.instance().setPushNotificationRegistrationID(regId);
 	}
 
 	@Override
 	protected void onUnregistered(Context context, String regId) {
-		initLogger(context);
-		Log.w("[Push Notification] Unregistered: " + regId);
-		
+		Log.w("Unregistered push notification : " + regId);
 		LinphonePreferences.instance().setPushNotificationRegistrationID(null);
 	}
 	
