@@ -1371,7 +1371,7 @@ public static boolean deleteDir(File dir) {
 					String acsessionid = prefs.getString("acsessionid", "No acsessionid found");//"No acsessionid defined" is the default value.
 											
 					
-					URL LogoutUrl = new URL("https://demo2.avhan.com:9443/ACSWebserviceP/CallACSWS.jsp?data="+URLEncoder.encode("{\"acssessionid\":"+"\""+acsessionid+"\""+",\"command\":"+ls.logoutCommand+",\"reqdatetime\":"+"\""+ls.reqdatetime+"\""+",\"reasonid\":"+ls.logoutReasionid+"}","UTF-8"));
+					URL LogoutUrl = new URL(getString(R.string.app_sip_url)+"data="+URLEncoder.encode("{\"acssessionid\":"+"\""+acsessionid+"\""+",\"command\":"+ls.logoutCommand+",\"reqdatetime\":"+"\""+ls.reqdatetime+"\""+",\"reasonid\":"+ls.logoutReasionid+"}","UTF-8"));
 					System.out.println("{\"acssessionid\":"+"\""+acsessionid+"\""+",\"command\":"+ls.logoutCommand+",\"reqdatetime\":"+"\""+ls.reqdatetime+"\""+",\"reasonid\":"+ls.logoutReasionid+"}");
 				
 					BufferedReader br = new BufferedReader(new InputStreamReader(LogoutUrl.openStream()));

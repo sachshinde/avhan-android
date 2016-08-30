@@ -1,9 +1,12 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xm
+l version='1.0' encoding='UTF-8'?>
 <resources>
 
 	<!-- Custom -->
 	<string name="app_name">Avhan</string>
-	<string name="service_name">Avhan Service</string>
+	<string name="app_login_url">https://demo2.avhan.com:9443/LoginWebService/indexLogin.jsp?</string>
+	<string name="app_sip_url">https://demo2.avhan.com:9443/ACSWebservice/CallACSWS.jsp?</string>
+		<string name="service_name">Avhan Service</string>
 	<string name="addressbook_label">Avhan</string>
 	<string name="notification_title">Avhan</string>
 	<string name="wait_dialog_text">Starting up</string>
